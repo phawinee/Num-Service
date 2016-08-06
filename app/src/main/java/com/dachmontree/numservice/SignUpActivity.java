@@ -1,11 +1,17 @@
 package com.dachmontree.numservice;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
+import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.RequestBody;
 
 public class SignUpActivity extends AppCompatActivity {
     //Explicit
@@ -70,6 +76,7 @@ public class SignUpActivity extends AppCompatActivity {
             myAlert.myDialog(this, 0,"มีช่องว่าง","กรุณากรอกทุกช่อง");
 
         }else if(avata0RadioButton.isChecked() || avata1RadioButton.isChecked() ||avata2RadioButton.isChecked()||avata3RadioButton.isChecked()||avata4RadioButton.isChecked()){
+            confirmValue();
 
         }else{
             MyAlert myAlert = new MyAlert();
@@ -79,4 +86,39 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
     }//click sign
+
+    private void confirmValue() {
+        MyAlert myAlert =new MyAlert();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setIcon(myAlert.findAvata(Integer.parseInt(avataString)));
+        builder.setTitle("โปรดตรวจสอบข้อมูล");
+        builder.setMessage("Name : "+nameString+ "\n User : "+userString + "\n Password : " +passString);
+        builder.setNegativeButton("Cencel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                uploadNewValueToServer();
+                dialogInterface.dismiss();
+            }
+        });
+           builder.show();
+    }
+
+    private void uploadNewValueToServer() {
+        OkHttpClient okHttpClient = new OkHttpClient();
+        RequestBody requestBody = new FormEncodingBuilder()
+                .add("isAdd", "true")
+                .add("Name", nameString)
+                .add("User", userString)
+                .add("Password", passString)
+                .add("Avata", avataString).build();
+
+
+    }
 }//Main class
