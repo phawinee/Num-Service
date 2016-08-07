@@ -8,10 +8,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,8 +37,11 @@ public class MainActivity extends AppCompatActivity {
     private class SynchonizeUser extends AsyncTask<Void, Void, String> {
 
         private Context context;
-        private String myuserString ,mypassString;
+        private String myuserString ,mypassString , truePasswordString , nameString;
         private static final String URL_json = "http://swiftcodingthai.com/6aug/get_user_noom.php";
+        private  boolean statusABoolean = true;
+
+
 
         public SynchonizeUser(Context context, String myuserString, String mypassString) {
             this.context = context;
@@ -65,6 +72,34 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(s);
 
             Log.d("7augv1","Json ==>" + s);
+
+            try {
+                JSONArray jsonArray = new JSONArray(s);
+                for (int i=0; i<jsonArray.length();i++){
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    if (myuserString.equals(jsonObject.getString("user"))) {
+                        truePasswordString = jsonObject.getString("password");
+                        nameString = jsonObject.getString("name");
+                        statusABoolean = false;
+
+                    }//end if
+
+                }//end for
+                if (statusABoolean) {
+                    MyAlert myAlert = new MyAlert();
+                    myAlert.myDialog(context,4,"เกิดข้อผิดพลาด","ไม่มี User นี้");
+                }else if(passString.equals(truePasswordString)){
+                    Toast.makeText(context,"Wecome",Toast.LENGTH_SHORT).show();
+
+
+                }else{
+                    MyAlert myAlert = new MyAlert();
+                    myAlert.myDialog(context,4,"เกิดข้อผิดพลาด","Password ไม่ถูกต้อง");
+                }
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
 
         }//onpost
     }//SynchonizeUser
