@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private class SynchonizeUser extends AsyncTask<Void, Void, String> {
 
         private Context context;
-        private String myuserString ,mypassString , truePasswordString , nameString;
+        private String myuserString ,mypassString , truePasswordString , nameString , avataString;
         private static final String URL_json = "http://swiftcodingthai.com/6aug/get_user_noom.php";
         private  boolean statusABoolean = true;
 
@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
                         truePasswordString = jsonObject.getString("password");
                         nameString = jsonObject.getString("name");
                         statusABoolean = false;
+                        avataString = jsonObject.getString("avata");
 
                     }//end if
 
@@ -90,7 +91,11 @@ public class MainActivity extends AppCompatActivity {
                     myAlert.myDialog(context,4,"เกิดข้อผิดพลาด","ไม่มี User นี้");
                 }else if(passString.equals(truePasswordString)){
                     Toast.makeText(context,"Wecome",Toast.LENGTH_SHORT).show();
-
+                    Intent intent = new Intent(MainActivity.this,ServiceActivity.class);
+                    intent.putExtra("Name",nameString);
+                    intent.putExtra("Avata",avataString);
+                    startActivity(intent);
+                    finish();
 
                 }else{
                     MyAlert myAlert = new MyAlert();
